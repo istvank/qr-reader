@@ -94,24 +94,32 @@
 					navigator.msGetUserMedia;
 
 				if (navigator.getUserMedia) {
-					media_options = {
-						"audio": false,
-						"video": true //{ width: { facingMode: "environment" } }
-					};
 
-					success = function (stream) {
-						me.shadowRoot.getElementById('video').src = (window.URL && window.URL.createObjectURL(stream)) || stream;
-						stream_obj = stream;
-						me.startScan();
-					};
+					MediaStreamTrack.getSources(function(sources) {
+						var backCamId = sources[sources.length - 1].id;
 
-					error = function (error) {
-						if (error && error.message) {
-							console.log(error.message);
-						}
-					};
+						media_options = {
+							"audio": false,
+							"video": {
+								optional: [{sourceId: backCamId}]
+							}
+						};
 
-					navigator.getUserMedia(media_options, success, error);
+						success = function (stream) {
+							me.shadowRoot.getElementById('video').src = (window.URL && window.URL.createObjectURL(stream)) || stream;
+							stream_obj = stream;
+							me.startScan();
+						};
+
+						error = function (error) {
+							if (error && error.message) {
+								console.log(error.message);
+							}
+						};
+
+						navigator.getUserMedia(media_options, success, error);
+					});
+
 				}
 				else {
 					me.shadowRoot.getElementById('output').innerHTML = 'Sorry, native web camera streaming is not supported by this browser...';
