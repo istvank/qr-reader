@@ -96,7 +96,7 @@
 				if (navigator.getUserMedia) {
 					media_options = {
 						"audio": false,
-						"video": true
+						"video": { width: { facingMode: "environment" } }
 					};
 
 					success = function (stream) {
