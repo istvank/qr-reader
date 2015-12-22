@@ -1359,7 +1359,8 @@
     qrcode.callback = null;
     qrcode.decode = function (d) {
         if (arguments.length == 0) {
-            var b = document.getElementById("canvas");
+            //var b = document.getElementById("canvas");
+			var b = document.querySelector('qr-reader').shadowRoot.getElementById('canvas');
             var a = b.getContext("2d");
             qrcode.width = b.width;
             qrcode.height = b.height;

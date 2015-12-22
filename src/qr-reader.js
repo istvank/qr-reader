@@ -27,7 +27,8 @@
 				output: '',
 				outputAttr: 'textContent',
 				onRead: '',
-				interval: 1000
+				interval: 1000,
+				scale: 0.5
 			}
 		},
 		defineAttributes: {
@@ -55,7 +56,26 @@
 		//
 		createdCallback: {
 			value: function () {
-				this.createShadowRoot();
+				// create the template programmatically
+				var root = this.createShadowRoot();
+				var div = document.createElement('div');
+				var video = document.createElement('video');
+				video.setAttribute('id', 'video');
+				video.setAttribute('autoplay', 'true');
+				video.setAttribute('width', '320');
+				video.setAttribute('height', '240');
+				div.appendChild(video);
+				var canvas = document.createElement('canvas');
+				canvas.setAttribute('id', 'canvas');
+				canvas.setAttribute('width', '320');
+				canvas.setAttribute('height', '240');
+				canvas.style.display = 'none';
+				div.appendChild(canvas);
+				var divOutput = document.createElement('div');
+				divOutput.setAttribute('id', 'output');
+				div.appendChild(divOutput);
+				root.appendChild(div); // Append elements to the Shadow Root
+
 				this.defineAttributes();
 
 				var me = this,
@@ -64,7 +84,7 @@
 					error;
 
 				qrcode.callback = function (value) {
-					onRead(me, value);
+					me.onReadFunc(me, value);
 				};
 
 				navigator.getUserMedia =
@@ -80,7 +100,7 @@
 					};
 
 					success = function (stream) {
-						me.$.video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
+						me.shadowRoot.getElementById('video').src = (window.URL && window.URL.createObjectURL(stream)) || stream;
 						stream_obj = stream;
 						me.startScan();
 					};
@@ -94,7 +114,7 @@
 					navigator.getUserMedia(media_options, success, error);
 				}
 				else {
-					this.$.output.innerHTML = 'Sorry, native web camera streaming is not supported by this browser...';
+					me.shadowRoot.getElementById('output').innerHTML = 'Sorry, native web camera streaming is not supported by this browser...';
 				}
 
 				//this.generate();
@@ -131,16 +151,16 @@
 		},
 		capture: {
 			value: function () {
-				var w = this.$.video.videoWidth * this.scale,
-					h = this.$.video.videoHeight * this.scale,
-					canvas = this.$.canvas.getContext('2d');
+				var w = this.shadowRoot.getElementById('video').videoWidth * this.scale,
+					h = this.shadowRoot.getElementById('video').videoHeight * this.scale,
+					canvas = this.shadowRoot.getElementById('canvas').getContext('2d');
 
-				canvas.drawImage(this.$.video.impl, 0, 0, w, h);
+				canvas.drawImage(this.shadowRoot.getElementById('video'), 0, 0, w, h);
 				try {
 					qrcode.decode();
 				}
 				catch (err) {
-					// console.log(err);
+					//console.log(err);
 				}
 			}
 		},
@@ -152,76 +172,29 @@
 						stream_obj.stop();
 					}
 					else {
-						this.$.video.pause();
-						this.$.video.src = null;
+						me.shadowRoot.getElementById('video').pause();
+						me.shadowRoot.getElementById('video').src = null;
 					}
 				}
 			}
 		},
+		onReadFunc: {
+			value: function(el, value) {
+				var output,
+					attrs,
+					obj = window,
+					i;
 
-
-		getOptions: {
-			value: function () {
-				var modulesize = this.modulesize,
-					margin = this.margin;
-				return {
-					modulesize: modulesize !== null ? parseInt(modulesize) : modulesize,
-					margin: margin !== null ? parseInt(margin) : margin
-				};
-			}
-		},
-		generate: {
-			value: function () {
-				if (this.data !== null) {
-					if (this.format === 'png') {
-						this.generatePNG();
-					}
-					else if (this.format === 'html') {
-						this.generateHTML();
-					}
-					else if (this.format === 'svg') {
-						this.generateSVG();
-					}
-					else {
-						this.shadowRoot.innerHTML = '<div>qr-code: '+ this.format +' not supported!</div>'
-					}
+				if (el.output !== null) {
+					output = el.output ? document.querySelector(el.output) : this.shadowRoot.getElementById('output');
+					output[el.outputAttr] = value;
 				}
-				else {
-					this.shadowRoot.innerHTML = '<div>qr-code: no data!</div>'
-				}
-			}
-		},
-		generatePNG: {
-			value: function () {
-				try {
-					var img = document.createElement('img');
-					img.src = QRCode.generatePNG(this.data, this.getOptions());
-					this.clear();
-					this.shadowRoot.appendChild(img);
-				}
-				catch (e) {
-					this.shadowRoot.innerHTML = '<div>qr-code: no canvas support!</div>'
-				}
-			}
-		},
-		generateHTML: {
-			value: function () {
-				var div = QRCode.generateHTML(this.data, this.getOptions());
-				this.clear();
-				this.shadowRoot.appendChild(div);
-			}
-		},
-		generateSVG: {
-			value: function () {
-				var div = QRCode.generateSVG(this.data, this.getOptions());
-				this.clear();
-				this.shadowRoot.appendChild(div);
-			}
-		},
-		clear: {
-			value: function () {
-				while (this.shadowRoot.lastChild) {
-					this.shadowRoot.removeChild(this.shadowRoot.lastChild);
+				if (el.onRead) {
+					attrs = el.onRead.split('.');
+					for (i=0; i<attrs.length; i++) {
+						obj = obj[attrs[i]];
+					}
+					obj(value);
 				}
 			}
 		}
