@@ -3,7 +3,7 @@
 A QR Code Reader Web Component. A custom event makes it easy to get notified about new reads.
 
 This repository was forked from https://github.com/educastellano/qr-reader.
-It is using [jsqrcode](https://github.com/LazarSoft/jsqrcode) lib.
+It is using the [jsqrcode](https://github.com/LazarSoft/jsqrcode) lib.
 
 
 ## Usage
