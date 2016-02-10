@@ -9,9 +9,16 @@
 	<qr-reader output></qr-reader>
 
 	<!-- Polyfill -->
-	<script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
+	<script src="../bower_components/webcomponentsjs/webcomponents.min.js"></script>
 	<!-- Webcomponent and dependencies -->
-	<script src="../src/jsqrcode.js"></script>
-	<script src="../src/qr-reader.js"></script>
+	<link rel="import" href="../qr-reader.html">
+
+	<script>
+		var qrReader = document.querySelector('qr-reader');
+
+		qrReader.addEventListener("qr-code-read", function(e) {
+			alert(e.detail);
+		});
+	</script>
 </body>
 </html>

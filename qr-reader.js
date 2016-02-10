@@ -194,8 +194,13 @@
 					i;
 
 				if (el.output !== null) {
-					output = el.output ? document.querySelector(el.output) : this.shadowRoot.getElementById('output');
-					output[el.outputAttr] = value;
+					//output = el.output ? document.querySelector(el.output) : this.shadowRoot.getElementById('output');
+					//output[el.outputAttr] = value;
+
+					// fire an event
+					var event = new CustomEvent("qr-code-read", { "detail": value });
+					// Dispatch/Trigger/Fire the event
+					this.dispatchEvent(event);
 				}
 				if (el.onRead) {
 					attrs = el.onRead.split('.');
@@ -205,7 +210,8 @@
 					obj(value);
 				}
 			}
-		}
+		},
+
 	});
 //
 // Register

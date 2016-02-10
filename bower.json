@@ -7,7 +7,7 @@
 	"description": "A QR Code Reader Web Component",
 	"main": "qr-reader.js",
 	"keywords": [
-		"web-component"
+		"web-components"
 	],
 	"license": "MIT",
 	"ignore": [
