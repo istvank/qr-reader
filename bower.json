@@ -1,5 +1,6 @@
 {
 	"name": "qr-reader",
+	"version": "0.1.0",
 	"homepage": "https://github.com/istvank/qr-reader",
 	"authors": [
 		"István Koren <https://istvank.eu>"
