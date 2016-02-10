@@ -1,0 +1,33 @@
+{
+  "name": "qr-reader",
+  "homepage": "https://github.com/istvank/qr-reader",
+  "authors": [
+    "István Koren <https://istvank.eu>"
+  ],
+  "description": "A QR Code Reader Web Component",
+  "main": "qr-reader.js",
+  "keywords": [
+    "web-components"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "webcomponentsjs": "^0.7.20"
+  },
+  "_release": "1e43655862",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "1e436558627dcdcd0b94b9cb2e3c0796918b889a"
+  },
+  "_source": "git://github.com/istvank/qr-reader.git",
+  "_target": "master",
+  "_originalSource": "istvank/qr-reader",
+  "_direct": true
+}

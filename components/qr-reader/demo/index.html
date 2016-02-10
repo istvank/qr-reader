@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>&lt;qr-reader&gt; Demo</title>
+</head>
+<body>
+	<p>An example of <code>&lt;qr-reader&gt;</code>.</p>
+
+	<p>Capture a QR Code with your camera. As soon as it is read, an alert shows the QR code's content.</p>
+
+	<!-- Using the Web Component -->
+	<qr-reader output></qr-reader>
+
+	<!-- Polyfill -->
+	<script src="../bower_components/webcomponentsjs/webcomponents.min.js"></script>
+	<!-- Webcomponent and dependencies -->
+	<link rel="import" href="../qr-reader.html">
+
+	<script>
+		var qrReader = document.querySelector('qr-reader');
+
+		qrReader.addEventListener("qr-code-read", function(e) {
+			alert(e.detail);
+		});
+	</script>
+</body>
+</html>
