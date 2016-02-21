@@ -87,6 +87,7 @@
 					me.onReadFunc(me, value);
 				};
 
+
 				navigator.getUserMedia =
 					navigator.getUserMedia ||
 					navigator.webkitGetUserMedia ||
@@ -95,34 +96,45 @@
 
 				if (navigator.getUserMedia) {
 
-					MediaStreamTrack.getSources(function(sources) {
-						var backCamId = sources[sources.length - 1].id;
+					// List cameras and microphones.
 
-						media_options = {
-							"audio": false,
-							"video": {
-								optional: [{sourceId: backCamId}]
-							}
-						};
+					navigator.mediaDevices.enumerateDevices()
+						.then(function(devices) {
+							devices.forEach(function(device) {
+								if (device.kind === 'videoinput') {
+									var backCamId = device.deviceId;
 
-						success = function (stream) {
-							me.shadowRoot.getElementById('video').src = (window.URL && window.URL.createObjectURL(stream)) || stream;
-							stream_obj = stream;
-							me.startScan();
-						};
+									media_options = {
+										"audio": false,
+										"video": {
+											optional: [{sourceId: backCamId}]
+										}
+									};
 
-						error = function (error) {
-							if (error && error.message) {
-								console.log(error.message);
-							}
-						};
+									success = function (stream) {
+										me.shadowRoot.getElementById('video').src = (window.URL && window.URL.createObjectURL(stream)) || stream;
+										stream_obj = stream;
+										me.startScan();
+									};
 
-						navigator.getUserMedia(media_options, success, error);
-					});
+									error = function (error) {
+										if (error && error.message) {
+											console.error(error.message);
+										}
+									};
+
+									navigator.getUserMedia(media_options, success, error);
+
+								}
+							});
+						})
+						.catch(function(err) {
+							console.log(err.name + ": " + error.message);
+						});
 
 				}
 				else {
-					me.shadowRoot.getElementById('output').innerHTML = 'Sorry, native web camera streaming is not supported by this browser...';
+					console.log('Sorry, native web camera access is not supported by this browser...');
 				}
 
 				//this.generate();
