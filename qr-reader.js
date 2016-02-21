@@ -28,7 +28,8 @@
 				outputAttr: 'textContent',
 				onRead: '',
 				interval: 1000,
-				scale: 0.5
+				scale: 0.5,
+				autostart: false
 			}
 		},
 		defineAttributes: {
@@ -78,6 +79,24 @@
 
 				this.defineAttributes();
 
+				if (this.autostart !== false) {
+					this.startScan();
+				}
+			}
+		},
+		attributeChangedCallback: {
+			value: function (attrName, oldVal, newVal) {
+				var fn = this[attrName+'Changed'];
+				if (fn && typeof fn === 'function') {
+					fn.call(this, oldVal, newVal);
+				}
+			}
+		},
+		//
+		// Methods
+		//
+		startScan: {
+			value: function () {
 				var me = this,
 					media_options,
 					success,
@@ -114,7 +133,8 @@
 									success = function (stream) {
 										me.shadowRoot.getElementById('video').src = (window.URL && window.URL.createObjectURL(stream)) || stream;
 										stream_obj = stream;
-										me.startScan();
+										me.stream = stream;
+										//me.startScan();
 									};
 
 									error = function (error) {
@@ -132,40 +152,25 @@
 							console.log(err.name + ": " + error.message);
 						});
 
-				}
-				else {
+				} else {
 					console.log('Sorry, native web camera access is not supported by this browser...');
 				}
 
-				//this.generate();
-			}
-		},
-		attributeChangedCallback: {
-			value: function (attrName, oldVal, newVal) {
-				var fn = this[attrName+'Changed'];
-				if (fn && typeof fn === 'function') {
-					fn.call(this, oldVal, newVal);
-				}
-				this.generate();
-			}
-		},
-		//
-		// Methods
-		//
-		startScan: {
-			value: function () {
-				var me = this;
 
 				if (interval_id) {
 					me.stop();
 				}
-				interval_id = setInterval(function (video, scale) {
+				interval_id = setInterval(function(video, scale) {
 					me.capture()
 				}, this.interval);
 			}
 		},
 		stopScan: {
 			value: function () {
+				// close the stream from the webcam
+				this.stream.getTracks()[0].stop();
+
+				// stop trying to detect QR codes in the stream
 				clearInterval(interval_id);
 			}
 		},
@@ -186,6 +191,8 @@
 		},
 		stop: {
 			value: function () {
+				var me = this;
+
 				this.stopScan();
 				if (stream_obj) {
 					if ('stop' in stream_obj) {
