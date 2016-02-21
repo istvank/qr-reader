@@ -9,7 +9,7 @@ Feel free to send me any issues or pull requests!
 
 
 ## Demo
-Check the [component page](https://istvank.github.io/qr-reader/) for more information.
+Check our the [Demo](https://istvank.github.io/qr-reader/).
 
 
 ## Compatibility
